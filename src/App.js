@@ -2,6 +2,7 @@ import "./App.scss";
 import Nav from "./components/Navigation/Nav";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/about"></Route>
           <Route path="/"></Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/register" element={<Register />}></Route>
 
           {/* <Route path="*" element={<NoPage />} /> */}
         </Routes>
