@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Login.scss";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { loginUser } from "../../services/userService";
 
 const Login = (props) => {
+  const [valueLogin, setValueLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const defaultValidInput = {
+    isValidValueLogin: true,
+    isValidPassword: true,
+  };
+  const [objCheckInput, setObjCheckInput] = useState(defaultValidInput);
+
   const navigate = useNavigate();
   const handleCreateNewAccount = () => {
     navigate("/register");
+  };
+
+  const handleLogin = async () => {
+    setObjCheckInput(defaultValidInput);
+    if (!valueLogin) {
+      toast.error("Please enter your email address or phone number!");
+      setObjCheckInput({ ...defaultValidInput, isValidValueLogin: false });
+      return;
+    }
+    if (!password) {
+      toast.error("Please enter your password!");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return;
+    }
+
+    await loginUser(valueLogin, password);
   };
 
   return (
@@ -25,14 +51,32 @@ const Login = (props) => {
             <input
               type="text"
               placeholder="Email address or phone number"
-              className="form-control"
-            ></input>
+              className={
+                objCheckInput.isValidValueLogin
+                  ? "form-control"
+                  : "form-control is-invalid"
+              }
+              value={valueLogin}
+              onChange={(event) => setValueLogin(event.target.value)}
+            />
             <input
               type="password"
               placeholder="Password"
-              className="form-control"
-            ></input>
-            <button className="btn btn-primary">Login</button>
+              className={
+                objCheckInput.isValidPassword
+                  ? "form-control"
+                  : "form-control is-invalid"
+              }
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                handleLogin();
+              }}
+            >
+              Login
+            </button>
             <hr />
             <span className="text-center">
               <a href="#" className="forgot-password">
