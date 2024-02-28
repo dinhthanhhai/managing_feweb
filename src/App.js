@@ -6,12 +6,23 @@ import Register from "./components/Register/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Users from "./components/ManageUsers/Users";
+import { useEffect, useState } from "react";
+import _ from "lodash";
 
 function App() {
+  const [account, setAccount] = useState("");
+
+  useEffect(() => {
+    let session = sessionStorage.getItem("account");
+    if (session) {
+      setAccount(JSON.parse(session));
+    }
+  }, []);
   return (
     <BrowserRouter>
       <div className="app-container">
-        {/* <Nav /> */}
+        {account && !_.isEmpty(account) && account.isAuthenticated && <Nav />}
         <Routes>
           <Route path="/news"></Route>
           <Route path="/contact"></Route>
@@ -19,6 +30,7 @@ function App() {
           <Route path="/"></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
+          <Route path="/users" element={<Users />}></Route>
 
           {/* <Route path="*" element={<NoPage />} /> */}
         </Routes>

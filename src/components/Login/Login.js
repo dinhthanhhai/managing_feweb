@@ -13,11 +13,13 @@ const Login = (props) => {
   };
   const [objCheckInput, setObjCheckInput] = useState(defaultValidInput);
 
+  //Chuyen den trang register khi muon dk tk
   const navigate = useNavigate();
   const handleCreateNewAccount = () => {
     navigate("/register");
   };
 
+  //Login
   const handleLogin = async () => {
     setObjCheckInput(defaultValidInput);
     if (!valueLogin) {
@@ -31,7 +33,20 @@ const Login = (props) => {
       return;
     }
 
-    await loginUser(valueLogin, password);
+    let response = await loginUser(valueLogin, password);
+    if (response && response.data && +response.data.EC === 0) {
+      //success
+      let data = {
+        isAuthenticated: true,
+        token: "fake token",
+      };
+      sessionStorage.setItem("account", JSON.stringify(data));
+      navigate("/users");
+    }
+    if (response && response.data && +response.data.EC !== 0) {
+      toast.error(response.data.EM);
+    }
+    console.log(">>>check data: ", response.data);
   };
 
   return (
