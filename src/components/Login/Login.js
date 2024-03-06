@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.scss";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -42,12 +42,29 @@ const Login = (props) => {
       };
       sessionStorage.setItem("account", JSON.stringify(data));
       navigate("/users");
+      window.location.reload();
     }
     if (response && response.data && +response.data.EC !== 0) {
       toast.error(response.data.EM);
     }
     console.log(">>>check data: ", response.data);
   };
+
+  //Enter to login
+  const handlePressEnter = (event) => {
+    if (event.charCode === 13 && event.code === "Enter") {
+      handleLogin();
+    }
+  };
+
+  //Logged -> Users page
+  useEffect(() => {
+    let session = sessionStorage.getItem("account");
+    if (session) {
+      navigate("/users");
+      window.location.reload();
+    }
+  }, []);
 
   return (
     <div className="login-container">
@@ -83,6 +100,7 @@ const Login = (props) => {
                   : "form-control is-invalid"
               }
               onChange={(event) => setPassword(event.target.value)}
+              onKeyPress={(event) => handlePressEnter(event)}
             />
             <button
               className="btn btn-primary"
