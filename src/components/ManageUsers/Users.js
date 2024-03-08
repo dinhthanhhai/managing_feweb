@@ -1,20 +1,27 @@
 import { useState, useEffect } from "react";
 import { fetchAllUsers } from "../../services/userService";
+import ReactPaginate from "react-paginate";
 
 const Users = (props) => {
   const [listUsers, setListUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLimit, setCurrentLimit] = useState(2);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
-    let response = await fetchAllUsers();
+    let response = await fetchAllUsers(currentPage, currentLimit);
     if (response && response.data && response.data.EC === 0) {
-      setListUsers(response.data.DT);
-      console.log(response.data.DT);
+      setTotalPages(response.data.DT.totalPages);
+      setListUsers(response.data.DT.users);
+      console.log(response.data);
     }
   };
+
+  const handlePageClick = (event) => {};
 
   return (
     <div className="container">
@@ -58,42 +65,37 @@ const Users = (props) => {
                 </>
               ) : (
                 <>
-                  <span>Not found users!</span>
+                  <tr>
+                    <td>Not found users!</td>
+                  </tr>
                 </>
               )}
             </tbody>
           </table>
         </div>
         <div className="user-footer">
-          <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  Previous
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  Next
-                </a>
-              </li>
-            </ul>
-          </nav>
+          {totalPages > 0 && (
+            <ReactPaginate
+              nextLabel="next >"
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={3}
+              marginPagesDisplayed={2}
+              pageCount={totalPages}
+              previousLabel="< previous"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousClassName="page-item"
+              previousLinkClassName="page-link"
+              nextClassName="page-item"
+              nextLinkClassName="page-link"
+              breakLabel="..."
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+              containerClassName="pagination"
+              activeClassName="active"
+              renderOnZeroPageCount={null}
+            />
+          )}
         </div>
       </div>
     </div>
