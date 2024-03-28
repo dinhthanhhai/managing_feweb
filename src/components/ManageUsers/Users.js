@@ -11,8 +11,10 @@ const Users = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit, setCurrentLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
-  const [isShowModalDelete, serIsShowModalDelete] = useState(false);
+  const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [dataModal, setDataModal] = useState({});
+
+  const [isShowModalUser, setIsShowModalUser] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -33,7 +35,7 @@ const Users = (props) => {
 
   const handleDeleteUser = async (user) => {
     setDataModal(user);
-    serIsShowModalDelete(true);
+    setIsShowModalDelete(true);
   };
 
   const confirmDeleteUser = async () => {
@@ -41,15 +43,19 @@ const Users = (props) => {
     if (response && response.data.EC === 0) {
       toast.success(response.data.EM);
       await fetchUsers();
-      serIsShowModalDelete(false);
+      setIsShowModalDelete(false);
     } else {
       toast.error(response.data.EM);
     }
   };
 
   const handleClose = () => {
-    serIsShowModalDelete(false);
+    setIsShowModalDelete(false);
     setDataModal({});
+  };
+
+  const onHide = () => {
+    setIsShowModalUser(false);
   };
 
   return (
@@ -62,7 +68,12 @@ const Users = (props) => {
             </div>
             <div className="actions">
               <button className="btn btn-success">Refesh</button>
-              <button className="btn btn-primary">Add new user</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => setIsShowModalUser(true)}
+              >
+                Add new user
+              </button>
             </div>
           </div>
           <div className="user-container">
@@ -149,7 +160,11 @@ const Users = (props) => {
         dataModal={dataModal}
       />
 
-      <ModalUser title={"Edit"} />
+      <ModalUser
+        title={"Create"}
+        isShowModalUser={isShowModalUser}
+        onHide={onHide}
+      />
     </>
   );
 };
