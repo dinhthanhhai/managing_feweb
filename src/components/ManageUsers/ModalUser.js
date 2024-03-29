@@ -77,6 +77,7 @@ const ModalUser = (props) => {
   };
 
   const handleConfirmUser = async () => {
+    //create user
     let check = checkValidateInput();
     if (check === true) {
       let res = await createNewUser({
@@ -85,6 +86,7 @@ const ModalUser = (props) => {
       });
       if (res.data && res.data.EC === 0) {
         props.onHide();
+        setUserData({ ...defaultUserData, group: userGroup[0].id });
       } else {
         toast.error("Error create user!");
       }
@@ -99,6 +101,7 @@ const ModalUser = (props) => {
           aria-labelledby="contained-modal-title-vcenter"
           centered
           show={props.isShowModalUser}
+          onHide={props.onHide}
           className="modal-user"
           responsive="xxl"
         >
