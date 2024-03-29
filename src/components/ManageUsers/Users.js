@@ -11,10 +11,13 @@ const Users = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit, setCurrentLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
+  //modal delete
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [dataModal, setDataModal] = useState({});
-
+  //modal create-update
   const [isShowModalUser, setIsShowModalUser] = useState(false);
+  const [actionModalUser, setActionModalUser] = useState("");
+  const [dataModalUser, setDataModalUser] = useState({});
 
   useEffect(() => {
     fetchUsers();
@@ -25,7 +28,6 @@ const Users = (props) => {
     if (response && response.data && response.data.EC === 0) {
       setTotalPages(response.data.DT.totalPages);
       setListUsers(response.data.DT.users);
-      console.log(response.data);
     }
   };
 
@@ -54,8 +56,16 @@ const Users = (props) => {
     setDataModal({});
   };
 
-  const onHide = () => {
+  const onHide = async () => {
     setIsShowModalUser(false);
+    setDataModalUser({});
+    await fetchUsers();
+  };
+
+  const handleEditUser = (user) => {
+    setActionModalUser("UPDATE");
+    setDataModalUser(user);
+    setIsShowModalUser(true);
   };
 
   return (
@@ -70,7 +80,10 @@ const Users = (props) => {
               <button className="btn btn-success">Refesh</button>
               <button
                 className="btn btn-primary"
-                onClick={() => setIsShowModalUser(true)}
+                onClick={() => {
+                  setIsShowModalUser(true);
+                  setActionModalUser("CREATE");
+                }}
               >
                 Add new user
               </button>
@@ -95,14 +108,19 @@ const Users = (props) => {
                     {listUsers.map((item, index) => {
                       return (
                         <tr key={`row-${index}`}>
-                          <th scope="row">{index + 1}</th>
+                          <th scope="row">
+                            {(currentPage - 1) * currentLimit + index + 1}
+                          </th>
                           <td>{item.id}</td>
                           <td>{item.email}</td>
                           <td>{item.phone}</td>
                           <td>{item.username}</td>
                           <td>{item.Group ? item.Group.name : "Null"}</td>
                           <td className="d-flex justify-content-center ">
-                            <button className="btn btn-warning mx-3">
+                            <button
+                              className="btn btn-warning mx-3"
+                              onClick={() => handleEditUser(item)}
+                            >
                               Edit
                             </button>
                             <button
@@ -161,9 +179,10 @@ const Users = (props) => {
       />
 
       <ModalUser
-        title={"Create"}
         isShowModalUser={isShowModalUser}
         onHide={onHide}
+        actionModalUser={actionModalUser}
+        dataModalUser={dataModalUser}
       />
     </>
   );
