@@ -1,7 +1,12 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import "font-awesome/css/font-awesome.min.css";
 import { useState, useEffect } from "react";
-import { fetchGroup, createNewUser } from "../../services/userService";
+import {
+  fetchGroup,
+  createNewUser,
+  updateCurrentUser,
+} from "../../services/userService";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
@@ -73,6 +78,8 @@ const ModalUser = (props) => {
 
   const checkValidateInput = () => {
     //create user
+    if (actionModalUser === "UPDATE") return true;
+
     setValidInputs(validInputsDefault);
 
     let arr = ["email", "phone", "password", "group"];
@@ -96,10 +103,18 @@ const ModalUser = (props) => {
     //create user
     let check = checkValidateInput();
     if (check === true) {
-      let res = await createNewUser({
-        ...userData,
-        groupId: userData["group"],
-      });
+      let res = null;
+      if (actionModalUser === "CREATE") {
+        res = await createNewUser({
+          ...userData,
+          groupId: userData["group"],
+        });
+      } else {
+        res = await updateCurrentUser({
+          ...userData,
+          groupId: userData["group"],
+        });
+      }
       if (res.data && res.data.EC === 0) {
         toast.success(res.data.EM);
         props.onHide();
