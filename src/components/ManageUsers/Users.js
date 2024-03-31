@@ -25,9 +25,10 @@ const Users = (props) => {
 
   const fetchUsers = async () => {
     let response = await fetchAllUsers(currentPage, currentLimit);
-    if (response && response.data && response.data.EC === 0) {
-      setTotalPages(response.data.DT.totalPages);
-      setListUsers(response.data.DT.users);
+    console.log("check res fetchUser: ", response);
+    if (response && response.EC === 0) {
+      setTotalPages(response.DT.totalPages);
+      setListUsers(response.DT.users);
     }
   };
 
@@ -42,12 +43,12 @@ const Users = (props) => {
 
   const confirmDeleteUser = async () => {
     let response = await deleteUser(dataModal);
-    if (response && response.data.EC === 0) {
-      toast.success(response.data.EM);
+    if (response && response.EC === 0) {
+      toast.success(response.EM);
       await fetchUsers();
       setIsShowModalDelete(false);
     } else {
-      toast.error(response.data.EM);
+      toast.error(response.EM);
     }
   };
 
@@ -106,13 +107,27 @@ const Users = (props) => {
             <table className="table table-striped table-bordered table-hover">
               <thead>
                 <tr className="text-center">
-                  <th scope="col">No</th>
-                  <th scope="col">Id</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Phone</th>
-                  <th scope="col">User name</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Actions</th>
+                  <th scope="col" className="col-sm">
+                    No
+                  </th>
+                  <th scope="col" className="col-sm">
+                    Id
+                  </th>
+                  <th scope="col" className="col-sm">
+                    Email
+                  </th>
+                  <th scope="col" className="col-sm">
+                    Phone
+                  </th>
+                  <th scope="col" className="col-sm">
+                    User name
+                  </th>
+                  <th scope="col" className="col-sm">
+                    Role
+                  </th>
+                  <th scope="col" className="col-sm">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
