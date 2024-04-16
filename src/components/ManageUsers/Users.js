@@ -75,7 +75,7 @@ const Users = (props) => {
 
   return (
     <>
-      <div className="container">
+      <div className="container-fluid">
         <div className="manage-users-container">
           <div className="user-header">
             <div className="title mt-3">
@@ -103,31 +103,17 @@ const Users = (props) => {
               </button>
             </div>
           </div>
-          <div className="user-container">
+          <div className="user-container table-responsive">
             <table className="table table-striped table-bordered table-hover">
               <thead>
                 <tr className="text-center">
-                  <th scope="col" className="col-sm">
-                    No
-                  </th>
-                  <th scope="col" className="col-sm">
-                    Id
-                  </th>
-                  <th scope="col" className="col-sm">
-                    Email
-                  </th>
-                  <th scope="col" className="col-sm">
-                    Phone
-                  </th>
-                  <th scope="col" className="col-sm">
-                    User name
-                  </th>
-                  <th scope="col" className="col-sm">
-                    Role
-                  </th>
-                  <th scope="col" className="col-sm">
-                    Actions
-                  </th>
+                  <th scope="col">No</th>
+                  <th scope="col">Id</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">User name</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
