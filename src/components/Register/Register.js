@@ -84,19 +84,6 @@ const Register = (props) => {
     return true;
   };
 
-  useEffect(() => {
-    // axios.get("http://localhost:8080/api/v1/test-api").then((data) => {
-    //   console.log(">>>checkdata: ", data);
-    // });
-
-    axios.post("http://localhost:8080/api/v1/register", {
-      email,
-      phone,
-      username,
-      password,
-    });
-  }, []);
-
   return (
     <div className="register-container">
       <div className="container">

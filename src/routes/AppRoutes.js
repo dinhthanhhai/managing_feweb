@@ -8,13 +8,17 @@ import PrivateRoutes from "./PrivateRoutes";
 const AppRoutes = (props) => {
   return (
     <>
-      <PrivateRoutes path="/users" element={<Users />} />
-      <PrivateRoutes path="/projects" element={<div>Project</div>} />
+      {/* <PrivateRoutes path="/users" element={<Users />} />
+      <PrivateRoutes path="/projects" element={<div>Project</div>} /> */}
 
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<div>Hello</div>} />
+        <Route element={<PrivateRoutes />}>
+          <Route path="/users" element={<Users />} />
+          <Route path="/projects" element={<div>Project</div>} />
+        </Route>
       </Routes>
     </>
   );

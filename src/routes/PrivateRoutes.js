@@ -1,22 +1,15 @@
-import { Routes, Route } from "react-router-dom";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext";
+import { useNavigate, Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const PrivateRoutes = (props) => {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  console.log("isAuthenticated:", user.isAuthenticated);
 
   if (user && user.isAuthenticated === true) {
-    return (
-      <>
-        <Routes>
-          <Route path={props.path} element={props.element} />;
-        </Routes>
-      </>
-    );
+    return <Outlet />;
   } else {
-    return navigate("/login");
+    return <Navigate to="/login" />;
   }
 };
 

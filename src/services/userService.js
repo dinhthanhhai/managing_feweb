@@ -46,6 +46,12 @@ const getUserAccount = () => {
   return axios.get("/api/v1/account");
 };
 
+const logoutUser = async () => {
+  return axios.post("/api/v1/logout", {
+    withCredentials: true,
+  });
+};
+
 export {
   registerNewUser,
   loginUser,
@@ -55,4 +61,5 @@ export {
   createNewUser,
   updateCurrentUser,
   getUserAccount,
+  logoutUser,
 };

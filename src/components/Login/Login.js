@@ -1,12 +1,13 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import "./Login.scss";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser } from "../../services/userService";
-import { UserContext } from "../../context/UserContext";
+import { loginStart, loginSuccess, loginFailed } from "../../redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = (props) => {
-  const { loginContext } = useContext(UserContext);
+  const dispatch = useDispatch();
 
   const [valueLogin, setValueLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -35,28 +36,31 @@ const Login = (props) => {
       setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
       return;
     }
+    dispatch(loginStart());
+    try {
+      let response = await loginUser(valueLogin, password);
+      if (response && +response.EC === 0) {
+        //success
+        let groupWithRoles = response.DT.groupWithRoles;
+        let email = response.DT.email;
+        let username = response.DT.username;
+        let token = response.DT.access_token;
 
-    let response = await loginUser(valueLogin, password);
-    if (response && +response.EC === 0) {
-      //success
-      let groupWithRoles = response.DT.groupWithRoles;
-      let email = response.DT.email;
-      let username = response.DT.username;
-      let token = response.DT.access_token;
+        let data = {
+          isAuthenticated: true,
+          token: token,
+          account: { groupWithRoles, email, username },
+        };
+        dispatch(loginSuccess(data));
 
-      let data = {
-        isAuthenticated: true,
-        token: token,
-        account: { groupWithRoles, email, username },
-      };
-
-      loginContext(data);
-
-      navigate("/users");
-      // window.location.reload();
-    }
-    if (response && +response.EC !== 0) {
-      toast.error(response.EM);
+        navigate("/users");
+      }
+      if (response && +response.EC !== 0) {
+        toast.error(response.EM);
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(loginFailed());
     }
   };
 

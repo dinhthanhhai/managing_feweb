@@ -1,24 +1,75 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import { store } from "../redux/store";
+import { updateAccessToken } from "../redux/authSlice";
 
 // Set config defaults when creating the instance
 const instance = axios.create({
   baseURL: "http://localhost:8080",
+  withCredentials: true,
 });
 
 instance.defaults.withCredentials = true;
 
-// Alter defaults after instance has been created
-// instance.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+//Gan access token vao header
+// instance.interceptors.request.use(
+//   (config) => {
+//     const state = store.getState();
+//     const token = state.auth.login?.currentUser?.token;
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
+
+const refreshToken = async () => {
+  try {
+    const state = store.getState();
+    const currentUser = state.auth.login?.currentUser;
+    const token = currentUser?.token;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const res = await axios.post("http://localhost:8080/api/v1/refresh", null, {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Add a request interceptor
 instance.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
+  async function (config) {
+    const state = store.getState();
+    const currentUser = state.auth.login?.currentUser;
+    if (currentUser && currentUser.token) {
+      const decodedToken = jwtDecode(currentUser.token);
+      // Check if the token is expired
+      if (decodedToken.exp < Date.now() / 1000) {
+        const data = await refreshToken();
+        if (data && data.access_token) {
+          store.dispatch(updateAccessToken(data.access_token));
+          config.headers.Authorization = `Bearer ${data.access_token}`;
+        }
+      } else {
+        config.headers.Authorization = `Bearer ${currentUser.token}`;
+      }
+    }
     return config;
   },
   function (error) {
-    // Do something with request error
     return Promise.reject(error);
   }
 );
@@ -41,7 +92,7 @@ instance.interceptors.response.use(
       case 401: {
         toast.error("Unauthorized access. Please log in.");
         // window.location.href = "/login";
-        return Promise.reject(error);
+        return error.response.data;
       }
 
       // forbidden (permission related issues)
